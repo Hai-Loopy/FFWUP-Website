@@ -11,7 +11,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://https://ffwup-website.vercel.app/"),
+  metadataBase: new URL("https://ffwup-website.vercel.app/"),
   title: "unification church",
   description:
     "sOMETHING TO PUT HERE",
@@ -112,6 +112,7 @@ export default function RootLayout({
     </html>
   );
 }
+
 
 
 

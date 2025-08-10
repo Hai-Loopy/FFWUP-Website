@@ -18,7 +18,7 @@ export default function AboutUs() {
         />
         <div className="w-3/5 text-center">
           <h1 className="text-black text-2xl lg:text-4xl font-bold mb-4">
-            
+            nigger
           </h1>
           <p className="text-gray-500 lg:text-lg text-sm mb-4">
             

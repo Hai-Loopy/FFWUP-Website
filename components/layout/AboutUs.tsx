@@ -17,6 +17,7 @@ export default function AboutUs() {
           height={500}
         />
         <div className="w-3/5 text-center">
+          nigger
           <h1 className="text-black text-2xl lg:text-4xl font-bold mb-4">
             nigger
           </h1>

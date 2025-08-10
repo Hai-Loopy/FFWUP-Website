@@ -6,7 +6,7 @@ export default function ContactUs() {
     <section id="contact" className="bg-white py-16">
       <div className="container mx-auto px-4">
         <h1 className="text-[#a89076] text-shadow-lg/12 lg:text-6xl text-4xl font-bold text-center lg:mb-10 mb-5 uppercase">
-          Contacto
+          Contact
         </h1>
         <div className="lg:w-24 w-16 bg-[#a89076] h-1 mx-auto lg:mb-12 mb-8"></div>
 
@@ -55,3 +55,4 @@ export default function ContactUs() {
     </section>
   );
 }
+

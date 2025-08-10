@@ -9,7 +9,7 @@ export default function AboutUs() {
       <div className="lg:w-24 w-16 bg-[#a89076]  text-shadow h-1 flex lg:flex-row flex-col justify-between mx-auto lg:mb-24 mb-12"></div>
       <div className="flex flex-col md:flex-row items-center mx-auto max-w-[90rem] px-4">
         <Image
-          src="/about-us/acerca-de-nosotros.we"
+          src="/public/founder-of-the-unification-church.webp"
           loading="lazy"
           alt="About Us"
           className="h-auto lg:w-[64rem] w-[25rem] rounded-full lg:mr-8 mr-0 lg:mb-0 mb-8"

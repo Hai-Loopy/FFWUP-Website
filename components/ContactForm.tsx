@@ -34,12 +34,13 @@ export default function ContactForm() {
       } else {
         throw new Error("Failed to send message");
       }
-    } catch (_error) {
-      setResult({
-        success: false,
-        message: "Failed to send message. Please try again later.",
-      });
-    } finally {
+    } catch (error) {
+  console.error("Form submission error:", error);
+  setResult({
+    success: false,
+    message: "Failed to send message. Please try again later.",
+  });
+} finally {
       setIsSubmitting(false);
     }
   };

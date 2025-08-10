@@ -17,18 +17,25 @@ export default function AboutUs() {
           height={500}
         />
         <div className="w-3/5 text-center">
-          nigger
+         
           <h1 className="text-black text-2xl lg:text-4xl font-bold mb-4">
-            nigger
+             About Us
           </h1>
           <p className="text-gray-500 lg:text-lg text-sm mb-4">
-            
+            We are a faith community inspired by the vision of one human family under God.
+    Rooted in prayer and service, we work to strengthen marriages and families, build
+    bridges across cultures and faiths, and live out a spirit of mutual respect and love.
           </p>
           <p className="text-gray-500 lg:text-lg text-sm mb-4">
-            
+            Our congregation gathers each week for worship, study, and fellowship. We support
+    each other’s spiritual growth, celebrate life’s milestones, and encourage practical
+    compassion—whether through local service projects, youth mentorship, or interfaith
+    events that promote understanding and peace.
           </p>
           <p className="text-gray-500 lg:text-lg text-sm">
-            
+            If you’re seeking a place to belong, to learn, and to serve, we welcome you. Join us
+    as we pursue a life of faith, family, and community—working together for a world
+    where every person is honored and every home is a school of love.
           </p>
         </div>
       </div>

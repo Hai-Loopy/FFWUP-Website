@@ -6,6 +6,7 @@ import Hero from "@/components/layout/Hero";
 export default function Home() {
   return (
     <main>
+      <div style={{position: 'fixed', top: '0', left: '0', backgroundColor: 'red', color: 'white', padding: '20px', zIndex: 9999}}>TEST - THIS SHOULD BE VISIBLE</div>
       <Hero />
       <AboutUs />
       <Gallery />
@@ -22,3 +23,4 @@ export default function Home() {
     </main>
   );
 }
+

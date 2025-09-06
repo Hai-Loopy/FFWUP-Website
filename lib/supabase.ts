@@ -1,9 +1,21 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_SUPABASE_ANON_KEY!
+// Server-side Supabase client (for API routes)
+const supabaseUrl = process.env.SUPABASE_URL!
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY!
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
+
+// Client-side helper functions
+export async function authenticateUser(email: string, password: string) {
+  // This will be called from the NextAuth provider
+  const response = await fetch('/api/auth/validate-user', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  })
+  return response.json()
+}
 
 // Types for our database tables
 export interface User {

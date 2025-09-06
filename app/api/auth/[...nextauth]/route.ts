@@ -1,7 +1,5 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import bcrypt from "bcryptjs"
-import { supabase } from "@/lib/supabase"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -19,39 +17,23 @@ const handler = NextAuth({
         }
 
         try {
-          // Find user in Supabase database
-          const { data: user, error } = await supabase
-            .from('users')
-            .select('*')
-            .eq('email', credentials.email)
-            .single()
+          // Call our validation API route
+          const response = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/validate-user`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password
+            })
+          })
 
-          if (error || !user) {
-            console.log('User not found:', credentials.email)
+          if (!response.ok) {
             return null
           }
 
-          // Check if user is verified
-          if (!user.verified) {
-            throw new Error('Please verify your email before logging in')
-          }
+          const user = await response.json()
+          return user
 
-          // Check password
-          const isPasswordValid = await bcrypt.compare(credentials.password, user.password_hash)
-
-          if (!isPasswordValid) {
-            console.log('Invalid password for:', credentials.email)
-            return null
-          }
-
-          console.log('Login successful for:', user.email)
-          
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-          }
         } catch (error) {
           console.error('Auth error:', error)
           return null

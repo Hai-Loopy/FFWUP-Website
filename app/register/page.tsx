@@ -1,124 +1,165 @@
-import { NextRequest, NextResponse } from 'next/server'
-import bcrypt from 'bcryptjs'
-import nodemailer from 'nodemailer'
+'use client'
 
-// In production, this would be a database
-const users: any[] = []
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
-// Simple email verification storage (in production, use database)
-const verificationTokens: { [key: string]: { email: string; expires: Date } } = {}
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-export async function POST(request: NextRequest) {
-  try {
-    const { name, email, password } = await request.json()
+export default function RegisterPage() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  })
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
 
     // Validation
-    if (!name || !email || !password) {
-      return NextResponse.json(
-        { message: 'All fields are required' },
-        { status: 400 }
-      )
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match')
+      setLoading(false)
+      return
     }
 
-    if (password.length < 6) {
-      return NextResponse.json(
-        { message: 'Password must be at least 6 characters' },
-        { status: 400 }
-      )
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters')
+      setLoading(false)
+      return
     }
 
-    // Check if user already exists
-    const existingUser = users.find(u => u.email === email)
-    if (existingUser) {
-      return NextResponse.json(
-        { message: 'User already exists' },
-        { status: 400 }
-      )
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setSuccess('Registration successful! Please check your email to verify your account.')
+        setFormData({ name: '', email: '', password: '', confirmPassword: '' })
+      } else {
+        setError(data.message || 'Registration failed')
+      }
+    } catch (error) {
+      setError('An error occurred. Please try again.')
+    } finally {
+      setLoading(false)
     }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12)
-
-    // Generate verification token
-    const verificationToken = Math.random().toString(36).substring(2) + Date.now().toString(36)
-    
-    // Create user (unverified)
-    const newUser = {
-      id: Date.now().toString(),
-      name,
-      email,
-      password: hashedPassword,
-      role: 'user',
-      verified: false,
-      createdAt: new Date()
-    }
-
-    users.push(newUser)
-
-    // Store verification token (expires in 24 hours)
-    verificationTokens[verificationToken] = {
-      email,
-      expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
-    }
-
-    // Send verification email
-    await sendVerificationEmail(email, name, verificationToken)
-
-    return NextResponse.json(
-      { message: 'Registration successful! Please check your email to verify your account.' },
-      { status: 201 }
-    )
-
-  } catch (error) {
-    console.error('Registration error:', error)
-    return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 }
-    )
   }
-}
 
-async function sendVerificationEmail(email: string, name: string, token: string) {
-  // Email configuration (you'll need to set these environment variables)
-  const transporter = nodemailer.createTransporter({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD,
-    },
-  })
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    })
+  }
 
-  const verificationUrl = `${process.env.NEXTAUTH_URL}/api/auth/verify?token=${token}`
-
-  const mailOptions = {
-    from: process.env.SMTP_USER,
-    to: email,
-    subject: 'Verify Your FFWUP Account',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2>Welcome to FFWUP, ${name}!</h2>
-        <p>Thank you for registering. Please click the button below to verify your email address:</p>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${verificationUrl}" 
-             style="background-color: #3B82F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-            Verify Email Address
-          </a>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Create your account
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Or{' '}
+            <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+              sign in to your account
+            </Link>
+          </p>
         </div>
-        <p>Or copy and paste this link in your browser:</p>
-        <p style="color: #666; word-break: break-all;">${verificationUrl}</p>
-        <p>This link will expire in 24 hours.</p>
-        <p>If you didn't create this account, please ignore this email.</p>
-      </div>
-    `,
-  }
+        
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+              {error}
+            </div>
+          )}
+          
+          {success && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+              {success}
+            </div>
+          )}
+          
+          <div className="space-y-4">
+            <div>
+              <input
+                name="name"
+                type="text"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Full Name"
+                value={formData.name}
+                onChange={handleChange}
+              />
+            </div>
+            
+            <div>
+              <input
+                name="email"
+                type="email"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Email address"
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </div>
+            
+            <div>
+              <input
+                name="password"
+                type="password"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Password (min 6 characters)"
+                value={formData.password}
+                onChange={handleChange}
+              />
+            </div>
+            
+            <div>
+              <input
+                name="confirmPassword"
+                type="password"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
 
-  try {
-    await transporter.sendMail(mailOptions)
-    console.log('Verification email sent to:', email)
-  } catch (error) {
-    console.error('Failed to send verification email:', error)
-    // Don't throw error - user is still registered, just email failed
-  }
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md disabled:opacity-50"
+            >
+              {loading ? 'Creating Account...' : 'Create Account'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
 }

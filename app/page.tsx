@@ -6,42 +6,7 @@ import Hero from "@/components/layout/Hero";
 export default function Home() {
   return (
     <main>
-     <div style={{
-  position: 'fixed', 
-  top: '0', 
-  right: '0', 
-  padding: '20px', 
-  zIndex: 9999,
-  display: 'flex',
-  gap: '10px'
-}}>
-  <a 
-    href="/login" 
-    style={{
-      backgroundColor: '#3B82F6',
-      color: 'white',
-      padding: '8px 16px',
-      textDecoration: 'none',
-      borderRadius: '6px',
-      fontSize: '14px'
-    }}
-  >
-    Login
-  </a>
-  <a 
-    href="/register"
-    style={{
-      backgroundColor: '#10B981',
-      color: 'white',
-      padding: '8px 16px',
-      textDecoration: 'none',
-      borderRadius: '6px',
-      fontSize: '14px'
-    }}
-  >
-    Register
-  </a>
-</div>
+     
       <Hero />
       <AboutUs />
       <Gallery />
@@ -58,5 +23,6 @@ export default function Home() {
     </main>
   );
 }
+
 
 

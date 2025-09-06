@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import nodemailer from 'nodemailer'
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 // In production, this would be a database
 const users: any[] = []
 

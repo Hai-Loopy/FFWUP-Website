@@ -34,7 +34,7 @@ export default function LoginPage() {
           setError(result.error)
         }
       } else {
-        router.push('/dashboard')
+        window.location.href = '/dashboard'
       }
     } catch {
       setError('An error occurred. Please try again.')

@@ -1,20 +1,12 @@
 'use client'
 
 import { useSession, signOut } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 import Link from 'next/link'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export default function Dashboard() {
   const { data: session, status } = useSession()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (status === 'loading') return
-    if (!session) router.push('/login')
-  }, [session, status, router])
 
   if (status === 'loading') {
     return (
@@ -25,7 +17,20 @@ export default function Dashboard() {
   }
 
   if (!session) {
-    return null
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h2>
+          <p className="text-gray-600 mb-4">Please log in to access the dashboard.</p>
+          <Link 
+            href="/login" 
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          >
+            Go to Login
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -62,29 +67,75 @@ export default function Dashboard() {
           <h2 className="text-lg font-medium text-gray-900 mb-4">
             Dashboard - Login Successful!
           </h2>
-          <p className="text-gray-600 mb-4">
-            You are logged in as {session.user?.name} ({(session.user as any)?.role})
+          <p className="text-gray-600 mb-6">
+            You are successfully logged into the FFWUP community dashboard.
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-blue-50 p-4 rounded">
-              <h3 className="font-medium text-blue-900">User Info</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <h3 className="font-medium text-blue-900">User Information</h3>
               <p className="text-blue-700 mt-1">Email: {session.user?.email}</p>
-              <p className="text-blue-700">Role: {(session.user as any)?.role}</p>
+              <p className="text-blue-700">Name: {session.user?.name}</p>
+              <p className="text-blue-700">Role: {(session.user as any)?.role || 'user'}</p>
             </div>
             
-            {(session.user as any)?.role === 'admin' && (
-              <div className="bg-green-50 p-4 rounded">
-                <h3 className="font-medium text-green-900">Admin Actions</h3>
+            <div className="bg-green-50 p-4 rounded-lg">
+              <h3 className="font-medium text-green-900">Status</h3>
+              <p className="text-green-700 mt-1">✅ Successfully Logged In</p>
+              <p className="text-green-700">🔒 Dashboard Access Granted</p>
+            </div>
+            
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <h3 className="font-medium text-purple-900">Quick Actions</h3>
+              <div className="mt-2 space-y-2">
+                {(session.user as any)?.role === 'admin' && (
+                  <Link 
+                    href="/admin"
+                    className="block text-purple-700 hover:text-purple-900 text-sm"
+                  >
+                    → Admin Panel
+                  </Link>
+                )}
                 <Link 
-                  href="/admin"
-                  className="text-green-700 hover:text-green-900 text-sm"
+                  href="/"
+                  className="block text-purple-700 hover:text-purple-900 text-sm"
                 >
-                  → Go to Admin Panel
+                  → Back to Homepage
                 </Link>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="block text-purple-700 hover:text-purple-900 text-sm text-left"
+                >
+                  → Refresh Dashboard
+                </button>
               </div>
-            )}
+            </div>
           </div>
+
+          <div className="mt-6 p-4 bg-yellow-50 rounded-lg">
+            <h3 className="font-medium text-yellow-900">Welcome Message</h3>
+            <p className="text-yellow-700 mt-1">
+              Welcome to the FFWUP community dashboard! This is a protected page that only logged-in users can access.
+              {(session.user as any)?.role === 'admin' && 
+                ' As an admin, you have access to the admin panel where you can manage announcements and documents.'
+              }
+            </p>
+          </div>
+
+          {(session.user as any)?.role === 'admin' && (
+            <div className="mt-6 p-4 bg-red-50 rounded-lg">
+              <h3 className="font-medium text-red-900">Admin Features</h3>
+              <p className="text-red-700 mt-1 mb-3">
+                You have administrator privileges. You can manage content and users.
+              </p>
+              <Link 
+                href="/admin"
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm"
+              >
+                Go to Admin Panel
+              </Link>
+            </div>
+          )}
         </div>
       </main>
     </div>

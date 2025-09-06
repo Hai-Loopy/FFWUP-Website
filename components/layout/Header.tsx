@@ -45,7 +45,7 @@ const linksAfterLogo = navLinks.slice(logoInsertionIndex);
 
 export default function Header() {
   return (
-    <header className="absolute bg-gradient-to-b from-black to-transparent w-full">
+    <header className="bg-black w-full relative z-50">
       <div className="container mx-auto flex justify-between items-center h-28 px-4 sm:px-6 lg:px-8">
         {/* Left spacer for mobile */}
         <div className="w-8 lg:w-0"></div>

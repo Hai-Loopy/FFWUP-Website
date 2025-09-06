@@ -135,6 +135,9 @@ export default function Header() {
         
         {/* Right Side - Login Buttons */}
         <div className="flex items-center">
+          <div className="bg-yellow-400 text-black p-4 font-bold">
+            HEADER IS WORKING - LOGIN BUTTONS SHOULD BE HERE
+          </div>
           <LoginButtons />
         </div>
       </div>

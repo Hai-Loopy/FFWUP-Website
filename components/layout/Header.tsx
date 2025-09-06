@@ -39,66 +39,91 @@ function Logo() {
 function LoginButtons() {
   const { data: session, status } = useSession()
 
-  if (status === 'loading') {
-    return (
-      <div className="bg-yellow-500 px-4 py-2 text-sm text-black rounded">
-        Loading...
-      </div>
-    )
-  }
+  // Add error handling to prevent crashes
+  try {
+    if (status === 'loading') {
+      return (
+        <div className="bg-yellow-500 px-4 py-2 text-sm text-black rounded">
+          Loading...
+        </div>
+      )
+    }
 
-  if (session) {
-    // User is logged in
-    return (
-      <div className="flex items-center space-x-2">
-        <span className="text-white text-sm hidden sm:block">
-          {session.user?.name}
-        </span>
-        
-        {/* Show admin panel link if user is admin */}
-        {(session.user as any)?.role === 'admin' && (
+    if (session && session.user) {
+      // User is logged in
+      return (
+        <div className="flex items-center space-x-2">
+          <span className="text-white text-sm hidden sm:block">
+            {session.user?.name || 'User'}
+          </span>
+          
+          {/* Show admin panel link if user is admin */}
+          {(session.user as any)?.role === 'admin' && (
+            <Link 
+              href="/admin"
+              className="text-white hover:text-black py-2 px-3 hover:bg-white transition rounded-md text-sm"
+            >
+              Admin
+            </Link>
+          )}
+          
           <Link 
-            href="/admin"
+            href="/dashboard"
             className="text-white hover:text-black py-2 px-3 hover:bg-white transition rounded-md text-sm"
           >
-            Admin
+            Dashboard
           </Link>
-        )}
-        
-        <Link 
-          href="/dashboard"
-          className="text-white hover:text-black py-2 px-3 hover:bg-white transition rounded-md text-sm"
+          
+          <button
+            onClick={() => signOut()}
+            className="text-white hover:text-black py-2 px-3 hover:bg-white transition rounded-md text-sm"
+          >
+            Sign Out
+          </button>
+        </div>
+      )
+    }
+
+    // User is not logged in - ALWAYS show these buttons
+    return (
+      <div className="flex items-center space-x-2">
+        <Link
+          href="/login"
+          className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded text-sm"
         >
-          Dashboard
+          Login
         </Link>
-        
-        <button
-          onClick={() => signOut()}
-          className="text-white hover:text-black py-2 px-3 hover:bg-white transition rounded-md text-sm"
+        <Link
+          href="/register"
+          className="border border-white text-white hover:bg-white hover:text-black py-2 px-4 rounded text-sm transition"
         >
-          Sign Out
-        </button>
+          Register
+        </Link>
+      </div>
+    )
+  } catch (error) {
+    // If there's any error, always show login buttons
+    console.error('Error in LoginButtons:', error)
+    return (
+      <div className="flex items-center space-x-2">
+        <div className="bg-red-500 text-white px-2 py-1 text-xs rounded mr-2">
+          Error
+        </div>
+        <Link
+          href="/login"
+          className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded text-sm"
+        >
+          Login
+        </Link>
+        <Link
+          href="/register"
+          className="border border-white text-white hover:bg-white hover:text-black py-2 px-4 rounded text-sm transition"
+        >
+          Register
+        </Link>
       </div>
     )
   }
-
-  // User is not logged in - ALWAYS show these buttons
-  return (
-    <div className="flex items-center space-x-2">
-      <Link
-        href="/login"
-        className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded text-sm"
-      >
-        Login
-      </Link>
-      <Link
-        href="/register"
-        className="border border-white text-white hover:bg-white hover:text-black py-2 px-4 rounded text-sm transition"
-      >
-        Register
-      </Link>
-    </div>
-  )
 }
 
 const navLinks: LinkProps[] = [

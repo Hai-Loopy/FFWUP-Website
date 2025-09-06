@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import LoginButton from "../LoginButton";
 
 interface LinkProps {
   href: string;
@@ -44,8 +45,12 @@ const linksAfterLogo = navLinks.slice(logoInsertionIndex);
 
 export default function Header() {
   return (
-    <header className="absolute bg-gradient-to-b from-black to-transparent w-full  ">
-      <div className="container mx-auto flex justify-center items-center h-28 px-4 sm:px-6 lg:px-8 ">
+    <header className="absolute bg-gradient-to-b from-black to-transparent w-full">
+      <div className="container mx-auto flex justify-between items-center h-28 px-4 sm:px-6 lg:px-8">
+        {/* Left spacer for mobile */}
+        <div className="w-8 lg:w-0"></div>
+        
+        {/* Center Navigation */}
         <nav
           className="flex justify-center items-center space-x-8 z-10"
           aria-label="Main Navigation"
@@ -58,6 +63,11 @@ export default function Header() {
             <NavLink key={link.label} href={link.href} label={link.label} />
           ))}
         </nav>
+        
+        {/* Right Side - Login Button */}
+        <div className="flex items-center">
+          <LoginButton />
+        </div>
       </div>
     </header>
   );

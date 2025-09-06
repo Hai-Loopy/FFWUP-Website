@@ -1,73 +1,55 @@
-import NextAuth from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
+import { NextRequest, NextResponse } from 'next/server'
+import bcrypt from 'bcryptjs'
+import { supabaseAdmin } from '@/lib/supabase'
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+export async function POST(request: NextRequest) {
+  try {
+    const { email, password } = await request.json()
 
-const handler = NextAuth({
-  providers: [
-    CredentialsProvider({
-      name: "credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null
-        }
+    console.log('Login attempt for email:', email)
 
-        try {
-          // Call our validation API route
-          const response = await fetch(`${process.env.NEXTAUTH_URL}/api/validate-user`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: credentials.email,
-              password: credentials.password
-            })
-          })
+    if (!email || !password) {
+      return NextResponse.json({ error: 'Missing credentials' }, { status: 400 })
+    }
 
-          if (!response.ok) {
-            return null
-          }
+    // Find user in Supabase database
+    const { data: user, error } = await supabaseAdmin
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .single()
 
-          const user = await response.json()
-          return user
+    console.log('Database query result:', { user: user ? 'found' : 'not found', error })
 
-        } catch (error) {
-          console.error('Auth error:', error)
-          return null
-        }
-      }
+    if (error || !user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
+    // Check if user is verified
+    if (!user.verified) {
+      return NextResponse.json({ error: 'Please verify your email' }, { status: 403 })
+    }
+
+    // Check password
+    const isPasswordValid = await bcrypt.compare(password, user.password_hash)
+    console.log('Password validation result:', isPasswordValid)
+
+    if (!isPasswordValid) {
+      return NextResponse.json({ error: 'Invalid password' }, { status: 401 })
+    }
+
+    console.log('Login successful for:', email)
+
+    // Return user data (without password)
+    return NextResponse.json({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
     })
-  ],
-  
-  session: {
-    strategy: "jwt",
-  },
-  
-  pages: {
-    signIn: "/login",
-  },
-  
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-        token.role = (user as any).role
-      }
-      return token
-    },
-    async session({ session, token }) {
-      if (token && session.user) {
-        (session.user as any).id = token.id as string
-        (session.user as any).role = token.role as string
-      }
-      return session
-    },
-  },
-  
-  secret: process.env.NEXTAUTH_SECRET,
-})
 
-export { handler as GET, handler as POST }
+  } catch (error) {
+    console.error('Validation error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}

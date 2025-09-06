@@ -18,7 +18,7 @@ const handler = NextAuth({
 
         try {
           // Call our validation API route
-          const response = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/validate-user`, {
+          const response = await fetch(`${process.env.NEXTAUTH_URL}/api/validate-user`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

@@ -10,7 +10,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY!
 )
 
-const authOptions = {
+const handler = NextAuth({
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -24,7 +24,7 @@ const authOptions = {
         }
 
         try {
-          console.log('Direct auth attempt for:', credentials.email)
+          console.log('Auth attempt for:', credentials.email)
 
           const { data: user, error } = await supabase
             .from('users')
@@ -66,8 +66,7 @@ const authOptions = {
   ],
   
   session: {
-    strategy: "jwt" as const,
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    strategy: "jwt",
   },
   
   pages: {
@@ -75,27 +74,23 @@ const authOptions = {
   },
   
   callbacks: {
-    async jwt({ token, user }: any) {
+    async jwt({ token, user }) {
       if (user) {
-        token.id = user.id
-        token.role = user.role
+        (token as any).id = user.id
+        (token as any).role = (user as any).role
       }
       return token
     },
-    async session({ session, token }: any) {
+    async session({ session, token }) {
       if (token && session.user) {
-        (session.user as any).id = token.id as string
-        (session.user as any).role = token.role as string
+        (session.user as any).id = (token as any).id
+        (session.user as any).role = (token as any).role
       }
       return session
     },
   },
   
   secret: process.env.NEXTAUTH_SECRET,
-  
-  debug: process.env.NODE_ENV === "development",
-}
-
-const handler = NextAuth(authOptions)
+})
 
 export { handler as GET, handler as POST }

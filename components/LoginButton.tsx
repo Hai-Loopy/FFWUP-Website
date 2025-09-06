@@ -1,6 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import LoginButton from "../LoginButton";
+import dynamic from 'next/dynamic';
+
+// Dynamically import LoginButton to avoid circular imports
+const LoginButton = dynamic(() => import('../LoginButton'), {
+  ssr: false,
+  loading: () => <div className="px-4 py-2 text-sm text-white">Loading...</div>
+})
 
 interface LinkProps {
   href: string;

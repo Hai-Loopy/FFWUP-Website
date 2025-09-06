@@ -1,6 +1,7 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 // Simple user database (in production, use a real database)
 const users = [

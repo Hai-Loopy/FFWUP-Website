@@ -1,55 +1,101 @@
-import { NextRequest, NextResponse } from 'next/server'
-import bcrypt from 'bcryptjs'
-import { supabaseAdmin } from '@/lib/supabase'
+import NextAuth from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
+import bcrypt from "bcryptjs"
+import { createClient } from '@supabase/supabase-js'
 
-export async function POST(request: NextRequest) {
-  try {
-    const { email, password } = await request.json()
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-    console.log('Login attempt for email:', email)
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_KEY!
+)
 
-    if (!email || !password) {
-      return NextResponse.json({ error: 'Missing credentials' }, { status: 400 })
-    }
+const authOptions = {
+  providers: [
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null
+        }
 
-    // Find user in Supabase database
-    const { data: user, error } = await supabaseAdmin
-      .from('users')
-      .select('*')
-      .eq('email', email)
-      .single()
+        try {
+          console.log('Direct auth attempt for:', credentials.email)
 
-    console.log('Database query result:', { user: user ? 'found' : 'not found', error })
+          const { data: user, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', credentials.email)
+            .single()
 
-    if (error || !user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
-    }
+          if (error || !user) {
+            console.log('User not found:', credentials.email)
+            return null
+          }
 
-    // Check if user is verified
-    if (!user.verified) {
-      return NextResponse.json({ error: 'Please verify your email' }, { status: 403 })
-    }
+          if (!user.verified) {
+            console.log('User not verified:', credentials.email)
+            return null
+          }
 
-    // Check password
-    const isPasswordValid = await bcrypt.compare(password, user.password_hash)
-    console.log('Password validation result:', isPasswordValid)
+          const isPasswordValid = await bcrypt.compare(credentials.password, user.password_hash)
+          
+          if (!isPasswordValid) {
+            console.log('Invalid password for:', credentials.email)
+            return null
+          }
 
-    if (!isPasswordValid) {
-      return NextResponse.json({ error: 'Invalid password' }, { status: 401 })
-    }
-
-    console.log('Login successful for:', email)
-
-    // Return user data (without password)
-    return NextResponse.json({
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
+          console.log('Login successful for:', credentials.email)
+          
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          }
+        } catch (error) {
+          console.error('Auth error:', error)
+          return null
+        }
+      }
     })
-
-  } catch (error) {
-    console.error('Validation error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+  ],
+  
+  session: {
+    strategy: "jwt" as const,
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  
+  pages: {
+    signIn: "/login",
+  },
+  
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+        token.role = user.role
+      }
+      return token
+    },
+    async session({ session, token }) {
+      if (token && session.user) {
+        (session.user as any).id = token.id as string
+        (session.user as any).role = token.role as string
+      }
+      return session
+    },
+  },
+  
+  secret: process.env.NEXTAUTH_SECRET,
+  
+  debug: process.env.NODE_ENV === "development",
 }
+
+const handler = NextAuth(authOptions)
+
+export { handler as GET, handler as POST }

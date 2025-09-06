@@ -6,7 +6,7 @@ import Link from 'next/link'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export default function Dashboard() {
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -98,7 +98,7 @@ export default function Dashboard() {
                 <div className="border-l-4 border-blue-500 pl-4">
                   <h4 className="font-medium text-gray-900">Welcome to Our New Website</h4>
                   <p className="text-sm text-gray-600 mt-1">
-                    We're excited to launch our new community platform. Stay tuned for updates!
+                    We are excited to launch our new community platform. Stay tuned for updates!
                   </p>
                   <p className="text-xs text-gray-500 mt-2">Posted by Admin • Just now</p>
                 </div>

@@ -40,7 +40,7 @@ export default function RootLayout({
           }}>
             <div>FFWUP WEBSITE - LOGIN BUTTONS:</div>
             <div style={{ display: 'flex', gap: '10px' }}>
-              <Link 
+              <a 
                 href="/login" 
                 style={{
                   backgroundColor: 'blue',
@@ -51,8 +51,8 @@ export default function RootLayout({
                 }}
               >
                 LOGIN
-              </Link>
-              <Link 
+              </a>
+              <a 
                 href="/register"
                 style={{
                   backgroundColor: 'green',
@@ -63,7 +63,7 @@ export default function RootLayout({
                 }}
               >
                 REGISTER
-              </Link>
+              </a>
             </div>
           </div>
           {children}

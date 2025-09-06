@@ -8,7 +8,7 @@ const users = [
   {
     id: "1",
     email: "admin@ffwup.com",
-    password: "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj9/7kDNkEO2", // "password123"
+    password: "password123", // "password123"
     name: "Admin User",
   }
 ]

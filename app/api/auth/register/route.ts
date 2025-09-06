@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
 
 async function sendVerificationEmail(email: string, name: string, token: string) {
   // Email configuration (you'll need to set these environment variables)
-  const transporter = nodemailer.createTransporter({
+  const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
     port: 587,
     secure: false,

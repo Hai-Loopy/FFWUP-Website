@@ -1,10 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -16,7 +13,6 @@ export default function RegisterPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

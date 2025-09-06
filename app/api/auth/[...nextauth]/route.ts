@@ -1,20 +1,9 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
+import bcrypt from "bcryptjs"
+import { supabase } from "@/lib/supabase"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
-// In production, this would be a database
-const users = [
-  {
-    id: "1",
-    email: "admin@ffwup.com",
-    password: "password123", // In production, use bcrypt hash
-    name: "Admin User",
-    role: "admin",
-    verified: true
-  }
-  // User accounts will be added through registration
-]
 
 const handler = NextAuth({
   providers: [
@@ -29,28 +18,43 @@ const handler = NextAuth({
           return null
         }
 
-        // Find user (in production, query database)
-        const user = users.find(u => u.email === credentials.email)
-        
-        if (!user) {
-          return null
-        }
+        try {
+          // Find user in Supabase database
+          const { data: user, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', credentials.email)
+            .single()
 
-        // Check if user is verified
-        if (!user.verified) {
-          throw new Error('Please verify your email before logging in')
-        }
+          if (error || !user) {
+            console.log('User not found:', credentials.email)
+            return null
+          }
 
-        // Check password (in production, use bcrypt.compare)
-        if (credentials.password !== user.password) {
+          // Check if user is verified
+          if (!user.verified) {
+            throw new Error('Please verify your email before logging in')
+          }
+
+          // Check password
+          const isPasswordValid = await bcrypt.compare(credentials.password, user.password_hash)
+
+          if (!isPasswordValid) {
+            console.log('Invalid password for:', credentials.email)
+            return null
+          }
+
+          console.log('Login successful for:', user.email)
+          
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          }
+        } catch (error) {
+          console.error('Auth error:', error)
           return null
-        }
-        
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
         }
       }
     })

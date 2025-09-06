@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
+import { Providers } from "./providers";  // ← ADD THIS LINE
 //import { Analytics } from "@vercel/analytics/react";
 //import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://ffwup-website.vercel.app/"),
   title: "unification church",
   description:
-    "sOMETHING TO PUT HERE",
+    "Unification Church",
   keywords: [
     "church",
     "christian",
@@ -64,9 +65,9 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Casa de Oración - South San DiegoUni",
+    title: "Casa de OraciÃ³n - South San DiegoUni",
     description:
-      "Únete a nosotros en adoración y alabanza en Casa de Oración en South San Diego mientras celebramos a nuestro Señor y Salvador, Jesucristo, en nuestra comunidad acogedora.",
+      "Ãšnete a nosotros en adoraciÃ³n y alabanza en Casa de OraciÃ³n en South San Diego mientras celebramos a nuestro SeÃ±or y Salvador, Jesucristo, en nuestra comunidad acogedora.",
     images: ["/twitter.png"],
     creator: "@casadeoracionssd",
     site: "@casadeoracionssd",
@@ -103,17 +104,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`antialiased`}>
-        {/*<Analytics />
-        <SpeedInsights/>*/}
-        <Header />
-        {children}
-        <Footer />
+        <Providers>  {/* ← ADD THIS */}
+          {/*<Analytics />
+          <SpeedInsights/>*/}
+          <Header />
+          {children}
+          <Footer />
+        </Providers>  {/* ← ADD THIS */}
       </body>
     </html>
   );
 }
-
-
-
-
-

@@ -69,12 +69,12 @@ const handler = NextAuth({
       }
       return token
     },
-    async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id as string
-      }
-      return session
-    },
+   async session({ session, token }) {
+  if (token && session.user) {
+    session.user.id = token.id as string
+  }
+  return session
+},
   },
   
   secret: process.env.NEXTAUTH_SECRET,

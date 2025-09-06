@@ -1,56 +1,37 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import bcrypt from "bcryptjs"
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
-// Simple user database (in production, use a real database)
-const users = [
-  {
-    id: "1",
-    email: "admin@ffwup.com",
-    password: "password123", // "password123"
-    name: "Admin User",
-  }
-]
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        email: { 
-          label: "Email", 
-          type: "email",
-          placeholder: "Enter your email"
-        },
-        password: { 
-          label: "Password", 
-          type: "password",
-          placeholder: "Enter your password"
-        }
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null
-        }
-
-        const user = users.find(u => u.email === credentials.email)
+        console.log('=== LOGIN ATTEMPT ===')
+        console.log('Email received:', credentials?.email)
+        console.log('Password received:', credentials?.password)
+        console.log('Email length:', credentials?.email?.length)
+        console.log('Password length:', credentials?.password?.length)
         
-        if (!user) {
-          return null
-        }
-
-        const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
-
-        if (!isPasswordValid) {
-          return null
+        // Super simple check - just log everything
+        if (credentials?.email === 'admin@ffwup.com' && credentials?.password === 'password123') {
+          console.log('✅ LOGIN SUCCESS')
+          return {
+            id: "1",
+            email: "admin@ffwup.com",
+            name: "Admin User",
+          }
         }
         
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-        }
+        console.log('❌ LOGIN FAILED')
+        console.log('Expected email: admin@ffwup.com')
+        console.log('Expected password: password123')
+        return null
       }
     })
   ],
@@ -63,22 +44,8 @@ const handler = NextAuth({
     signIn: "/login",
   },
   
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-      }
-      return token
-    },
-   async session({ session, token }) {
-  if (token && session.user) {
-    (session.user as any).id = token.id as string
-  }
-  return session
-},
-  },
-  
   secret: process.env.NEXTAUTH_SECRET,
+  debug: true,
 })
 
 export { handler as GET, handler as POST }

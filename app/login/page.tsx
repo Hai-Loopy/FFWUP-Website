@@ -1,34 +1,19 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState } from 'react'
 import { signIn } from 'next-auth/react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
-function LoginForm() {
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic'
+
+export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const searchParams = useSearchParams()
-
-  useEffect(() => {
-    // Check for URL parameters
-    const errorParam = searchParams.get('error')
-    const successParam = searchParams.get('success')
-
-    if (errorParam === 'invalid-token') {
-      setError('Invalid or expired verification link.')
-    } else if (errorParam === 'token-expired') {
-      setError('Verification link has expired. Please register again.')
-    } else if (errorParam === 'user-not-found') {
-      setError('User not found. Please register again.')
-    } else if (successParam === 'email-verified') {
-      setSuccess('Email verified successfully! You can now log in.')
-    }
-  }, [searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -78,12 +63,6 @@ function LoginForm() {
               {error}
             </div>
           )}
-
-          {success && (
-            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-              {success}
-            </div>
-          )}
           
           <div className="space-y-4">
             <div>
@@ -126,13 +105,5 @@ function LoginForm() {
         </div>
       </div>
     </div>
-  )
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
-      <LoginForm />
-    </Suspense>
   )
 }

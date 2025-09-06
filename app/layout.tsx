@@ -1,117 +1,30 @@
-import type { Metadata, Viewport } from "next";
-import "./globals.css";
-import Footer from "@/components/layout/Footer";
-import Header from "@/components/layout/Header";
-import { Providers } from "./providers";  // ← ADD THIS LINE
-//import { Analytics } from "@vercel/analytics/react";
-//import { SpeedInsights } from "@vercel/speed-insights/next";
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import "./globals.css"
+import { Providers } from "./providers"
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-};
+// Force dynamic generation
+export const dynamic = 'force-dynamic'
+
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ffwup-website.vercel.app/"),
-  title: "unification church",
-  description:
-    "Unification Church",
-  keywords: [
-    "church",
-    "christian",
-    "vancouver",
-    "richmond",
-    "bc",
-    "gospel",
-    "Bible",
-    "worship",
-    "Jesus",
-    "faith",
-    "comuninity",
-    "prediction",
-    "biblical teaching",
-    "church",
-    
-  ],
-  authors: [{ name: "FFWPU - Richmond, BC" }],
-  creator: "FFWPU - Richmond, BC",
-  publisher: "FFWPU - Richmond, BC",
-
-  robots: {
-    index: true,
-    follow: true,
-    nocache: true,
-    "max-video-preview": -1,
-    "max-image-preview": "large",
-    "max-snippet": -1,
-  },
-
-  openGraph: {
-    type: "website",
-    locale: "en_EN",
-    url: "https://ffwup-website.vercel.app/",
-    siteName: "FFWPU - Richmond, BC",
-    title: "FFWPU - Richmond, BC",
-
-    images: [
-      {
-        url: "/opengraph.png",
-        width: 800,
-        height: 600,
-        alt: "FFWPU - Richmond, BC",
-      },
-    ],
-  },
-
-  twitter: {
-    card: "summary_large_image",
-    title: "Casa de OraciÃ³n - South San DiegoUni",
-    description:
-      "Ãšnete a nosotros en adoraciÃ³n y alabanza en Casa de OraciÃ³n en South San Diego mientras celebramos a nuestro SeÃ±or y Salvador, Jesucristo, en nuestra comunidad acogedora.",
-    images: ["/twitter.png"],
-    creator: "@casadeoracionssd",
-    site: "@casadeoracionssd",
-  },
-
-  icons: {
-    icon: [
-      { url: "/favicon-new.ico", sizes: "any", type: "image/x-icon" },
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      {
-        url: "/android-chrome-512x512.png",
-        type: "image/png",
-        sizes: "512x512",
-      },
-      {
-        url: "/android-chrome-192x192.png",
-        type: "image/png",
-        sizes: "192x192",
-      },
-    ],
-    apple: [
-      { url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" },
-    ],
-  },
-  category: "religion",
-};
+  title: "FFWUP Website",
+  description: "FFWUP Website with Authentication",
+}
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
-      <body className={`antialiased`}>
-        <Providers>  {/* ← ADD THIS */}
-          {/*<Analytics />
-          <SpeedInsights/>*/}
-          <Header />
+      <body className={inter.className}>
+        <Providers>
           {children}
-          <Footer />
-        </Providers>  {/* ← ADD THIS */}
+        </Providers>
       </body>
     </html>
-  );
+  )
 }

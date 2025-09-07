@@ -98,17 +98,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="bg-red-500 text-white px-4 py-2 flex justify-between items-center">
-        <span className="text-sm font-medium">FFWUP WEBSITE - LOGIN BUTTONS:</span>
-        <div className="flex space-x-2">
-          <button className="bg-blue-600 hover:bg-blue-700 px-4 py-1 rounded text-sm font-medium transition-colors">
-            LOGIN
-          </button>
-          <button className="bg-green-600 hover:bg-green-700 px-4 py-1 rounded text-sm font-medium transition-colors">
-            REGISTER
-          </button>
-        </div>
-      </div>
+      
 
       {/* Main Content */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md mt-8">

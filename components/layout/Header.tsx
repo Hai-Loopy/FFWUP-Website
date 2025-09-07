@@ -88,7 +88,7 @@ function LoginButtons() {
     return (
       <div className="flex items-center space-x-2">
         <Link
-          href="/login"
+          href="/admin"
           className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded text-sm"
         >
           Login
@@ -110,7 +110,7 @@ function LoginButtons() {
           Error
         </div>
         <Link
-          href="/login"
+          href="/admin"
           className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded text-sm"
         >
           Login
@@ -140,29 +140,28 @@ const linksAfterLogo = navLinks.slice(logoInsertionIndex);
 export default function Header() {
   return (
     <header className="bg-black w-full relative z-50">
-      <div className="container mx-auto flex justify-between items-center h-28 px-4 sm:px-6 lg:px-8">
-        {/* Left spacer for mobile */}
+      <div className="container mx-auto flex items-center justify-between h-24 px-4 sm:px-4 lg:px-6">
+        {/* Left spacer */}
         <div className="w-8 lg:w-0"></div>
         
-        {/* Center Navigation */}
-        <nav
-          className="flex justify-center items-center space-x-8 z-10"
-          aria-label="Main Navigation"
-        >
-          {linksBeforeLogo.map((link) => (
-            <NavLink key={link.label} href={link.href} label={link.label} />
-          ))}
-          <Logo />
-          {linksAfterLogo.map((link) => (
-            <NavLink key={link.label} href={link.href} label={link.label} />
-          ))}
-        </nav>
+        {/* Center Navigation - Absolutely centered */}
+        <div className="absolute left-1/2 transform -translate-x-1/2">
+          <nav
+            className="flex items-center space-x-6"
+            aria-label="Main Navigation"
+          >
+            {linksBeforeLogo.map((link) => (
+              <NavLink key={link.label} href={link.href} label={link.label} />
+            ))}
+            <Logo />
+            {linksAfterLogo.map((link) => (
+              <NavLink key={link.label} href={link.href} label={link.label} />
+            ))}
+          </nav>
+        </div>
         
         {/* Right Side - Login Buttons */}
         <div className="flex items-center">
-          <div className="bg-yellow-400 text-black p-4 font-bold">
-            HEADER IS WORKING - LOGIN BUTTONS SHOULD BE HERE
-          </div>
           <LoginButtons />
         </div>
       </div>

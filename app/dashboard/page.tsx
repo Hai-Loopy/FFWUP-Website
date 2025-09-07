@@ -1,18 +1,27 @@
-// app/dashboard/page.tsx
 'use client';
 
-import { useAuth, withAuth } from '../../hooks/useAuth';
+import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
-function Dashboard() {
-  const { user, logout, isLoading } = useAuth();
+export default function Dashboard() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-  if (isLoading) {
+  useEffect(() => {
+    if (status === 'loading') return; // Still loading
+    if (!session) router.push('/admin'); // Not logged in
+  }, [session, status, router]);
+
+  if (status === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg">Loading...</div>
       </div>
     );
   }
+
+  if (!session) return null;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -25,13 +34,13 @@ function Dashboard() {
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-700">
-                Welcome, {user?.email}
+                Welcome, {session.user?.email}
               </span>
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                {user?.role}
+                {(session.user as any)?.role || 'user'}
               </span>
               <button
-                onClick={logout}
+                onClick={() => signOut()}
                 className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Logout
@@ -50,7 +59,7 @@ function Dashboard() {
                 Dashboard Content
               </h2>
               <p className="text-gray-600 mb-6">
-                You are successfully logged in as {user?.role}!
+                You are successfully logged in as {(session.user as any)?.role || 'user'}!
               </p>
               
               {/* User Info Card */}
@@ -59,21 +68,21 @@ function Dashboard() {
                 <dl className="space-y-2">
                   <div className="flex justify-between">
                     <dt className="text-sm font-medium text-gray-500">ID:</dt>
-                    <dd className="text-sm text-gray-900">{user?.id}</dd>
+                    <dd className="text-sm text-gray-900">{(session.user as any)?.id}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-sm font-medium text-gray-500">Email:</dt>
-                    <dd className="text-sm text-gray-900">{user?.email}</dd>
+                    <dd className="text-sm text-gray-900">{session.user?.email}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-sm font-medium text-gray-500">Role:</dt>
-                    <dd className="text-sm text-gray-900">{user?.role}</dd>
+                    <dd className="text-sm text-gray-900">{(session.user as any)?.role || 'user'}</dd>
                   </div>
                 </dl>
               </div>
 
               {/* Admin Only Section */}
-              {user?.role === 'admin' && (
+              {(session.user as any)?.role === 'admin' && (
                 <div className="mt-8 bg-blue-50 rounded-lg p-6">
                   <h3 className="text-lg font-medium text-blue-900 mb-2">
                     Admin Section
@@ -90,6 +99,3 @@ function Dashboard() {
     </div>
   );
 }
-
-// Wrap the component with authentication
-export default withAuth(Dashboard);
